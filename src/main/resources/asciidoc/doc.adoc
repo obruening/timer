@@ -1,0 +1,25 @@
+= Title
+:toc: macro 
+Oliver Brüning <obruening@yahoo.com>
+2018-12-13
+
+toc::[]
+
+
+== Introduction
+
+
+== SimpleCommand
+
+.SimpleCommand.java
+[source,java]
+----
+----
+
+
+
+.simple.bpmn
+[source,xml]
+----
+----
+

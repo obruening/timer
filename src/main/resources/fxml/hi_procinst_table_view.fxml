@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+
+<TableView fx:id="hiProcinstTableView" prefHeight="200.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="obruening.timer.controller.HiProcinstTableViewFxmlController">
+   <columns>
+      <TableColumn fx:id="idColumn" prefWidth="75.0" text="Id" />
+      <TableColumn fx:id="superProcessInstanceIdColumn" prefWidth="150.0" text="SuperProcessInstanceId" />
+      <TableColumn fx:id="processDefinitionIdColumn" prefWidth="200.0" text="ProcDefId" />
+      <TableColumn fx:id="startTimeColumn" prefWidth="180.0" text="StartTime" />
+      <TableColumn fx:id="endTimeColumn" prefWidth="180.0" text="EndTime" />
+   </columns>
+</TableView>

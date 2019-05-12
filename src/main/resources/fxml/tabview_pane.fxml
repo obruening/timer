@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+
+<TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="229.0" prefWidth="700.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="obruening.timer.controller.TabviewPaneFxmlController">
+  <tabs>
+      <Tab text="About this episode">
+         <content>
+            <WebView fx:id="helpWebView" prefHeight="200.0" prefWidth="200.0" />
+         </content>
+      </Tab>
+    <Tab fx:id="taskTab" text="Tasks" />
+    <Tab fx:id="hiProcinstTab" text="Process Instances" />
+      <Tab text="H2 Console">
+         <content>
+            <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0">
+               <top>
+                  <Hyperlink fx:id="h2Hyperlink" text="Open H2 Console in Browser" BorderPane.alignment="TOP_LEFT" />
+               </top>
+               <center>
+                  <WebView fx:id="h2WebView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+               </center>
+            </BorderPane>
+         </content>
+      </Tab>
+      <Tab fx:id="validationTab" text="Validation">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+        </content>
+      </Tab>
+  </tabs>
+</TabPane>
