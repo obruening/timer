@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+
+<TableView fx:id="processDefinitionTableView" prefHeight="200.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="obruening.timer.controller.ProcessDefinitionTableViewFxmlController">
+   <columns>
+      <TableColumn fx:id="idColumn" prefWidth="75.0" text="Id" />
+      <TableColumn fx:id="nameColumn" prefWidth="160.0" text="Name" />
+      <TableColumn fx:id="keyColumn" prefWidth="75.0" text="Key" />
+      <TableColumn fx:id="versionColumn" prefWidth="220.0" text="Version" />
+   </columns>
+</TableView>

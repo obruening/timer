@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="383.0" prefWidth="510.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="obruening.timer.controller.ProcessDefinitionDetailPaneFxmlController">
+   <children>
+      <Label fx:id="label" text="Label" />
+      <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+        <columns>
+          <TableColumn fx:id="nameValueColumn" prefWidth="75.0" text="Name" />
+            <TableColumn fx:id="longValueColumn" prefWidth="75.0" style="-fx-alignment: CENTER-RIGHT;" text="Long" />
+            <TableColumn fx:id="doubleValueColumn" prefWidth="75.0" style="-fx-alignment: CENTER-RIGHT;" text="Double" />
+            <TableColumn fx:id="textValueColumn" prefWidth="75.0" text="Text" />
+            <TableColumn fx:id="text2ValueColumn" prefWidth="75.0" text="Text2" />
+            <TableColumn fx:id="actionColumn" prefWidth="100.0" text="Action" />
+        </columns>
+      </TableView>
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <TextField fx:id="nameTextField" maxWidth="75.0" promptText="Name" />
+            <TextField fx:id="longValueTextField" layoutX="10.0" layoutY="10.0" maxWidth="75.0" promptText="Long Value" />
+            <TextField fx:id="doubleValueTextField" layoutX="85.0" layoutY="10.0" maxWidth="75.0" promptText="Double Value" />
+            <TextField fx:id="textValueTextField" layoutX="160.0" layoutY="10.0" maxWidth="75.0" promptText="Text Value" />
+            <Button fx:id="addButton" mnemonicParsing="false" text="Add" />
+         </children>
+      </HBox>
+      <Button fx:id="button" mnemonicParsing="false" text="Start" />
+   </children>
+</VBox>
