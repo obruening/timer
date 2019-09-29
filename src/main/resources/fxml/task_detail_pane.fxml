@@ -5,9 +5,17 @@
 <?import javafx.scene.layout.*?>
 
 
-<AnchorPane fx:id="taskDetailPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="obruening.timer.controller.TaskDetailPaneFxmlController">
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="obruening.timer.controller.TaskDetailPaneFxmlController">
    <children>
-      <Button fx:id="button" layoutX="14.0" layoutY="39.0" mnemonicParsing="false" text="Complete" />
       <Label fx:id="label" layoutX="14.0" layoutY="14.0" text="Label" />
+      <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+         <columns>
+            <TableColumn fx:id="nameValueColumn" prefWidth="75.0" text="Name" />
+            <TableColumn fx:id="textValueColumn" prefWidth="75.0" text="Text" />
+            <TableColumn fx:id="longValueColumn" prefWidth="75.0" style="-fx-alignment: CENTER-RIGHT;" text="Long" />
+            <TableColumn fx:id="doubleValueColumn" prefWidth="75.0" style="-fx-alignment: CENTER-RIGHT;" text="Double" />
+         </columns>
+      </TableView>
+      <Button fx:id="button" layoutX="14.0" layoutY="39.0" mnemonicParsing="false" text="Complete" />
    </children>
-</AnchorPane>
+</VBox>

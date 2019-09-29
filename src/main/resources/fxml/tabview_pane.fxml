@@ -12,6 +12,7 @@
             <WebView fx:id="helpWebView" prefHeight="200.0" prefWidth="200.0" />
          </content>
       </Tab>
+      <Tab fx:id="processDefinitionTab" text="Process Definitions" />
     <Tab fx:id="taskTab" text="Tasks" />
     <Tab fx:id="hiProcinstTab" text="Process Instances" />
       <Tab text="H2 Console">

@@ -1,7 +1,6 @@
 package obruening.timer.store;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -13,6 +12,7 @@ import org.camunda.bpm.engine.HistoryService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.history.HistoricProcessInstance;
+import org.camunda.bpm.engine.runtime.EventSubscription;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
 import org.slf4j.Logger;
@@ -32,15 +32,19 @@ import obruening.timer.model.primary.berechtigung.Berechtigung;
 import obruening.timer.model.primary.berechtigung.Profil;
 import obruening.timer.service.primary.PostService;
 import obruening.timer.service.primary.berechtigung.BerechtigungService;
+import obruening.timer.starter.ProcessStarter;
 import obruening.timer.store.event.AutoUpdateEvent;
 import obruening.timer.store.event.CreatePostEvent;
 import obruening.timer.store.event.NotifyEvent;
+import obruening.timer.store.event.ProcessDefinitionSelectedEvent;
 import obruening.timer.store.event.RefreshEvent;
 import obruening.timer.store.event.SelectPostEvent;
 import obruening.timer.store.event.TimerTriggeredEvent;
 import obruening.timer.store.event.workflow.BerechtigungenEvent;
 import obruening.timer.store.event.workflow.CallActivityEvent;
 import obruening.timer.store.event.workflow.CancelAndContinueEvent;
+import obruening.timer.store.event.workflow.MessageEventEvent;
+import obruening.timer.store.event.workflow.MessageEventTriggerEvent;
 import obruening.timer.store.event.workflow.MultiTimerEvent;
 import obruening.timer.store.event.workflow.TimerBoundaryEvent;
 import obruening.timer.store.event.workflow.TimerIntermediateEvent;
@@ -73,12 +77,18 @@ public class Store {
     @Autowired
     private BerechtigungService berechtigungService;
     
+    @Autowired
+    private List<ProcessStarter> processStarterList;
+    
     private List<Task> taskList = new ArrayList<>();
     private List<HistoricProcessInstance> historicProcessInstanceList = new ArrayList<>();
     private Task selectedTask = null;
     private HistoricProcessInstance selectedHistoricProcessInstance = null;
     private String taskMessage = "Select task.";
     private String historicProcessInstanceMessage = "Select process instance.";
+    private Map<String, Object> selectedVariableMap = new TreeMap<>();
+
+    private ProcessStarter selectedProcessStarter = null;
 
 	private Timer timer;
 
@@ -93,6 +103,15 @@ public class Store {
     public Task getSelectedTask() {
         return selectedTask;
     }
+    
+    public ProcessStarter getSelectedProcessStarter() {
+        return selectedProcessStarter;
+    }
+    
+    public Map<String, Object> getSelectedVariableMap() {
+        return selectedVariableMap;
+    }
+
 
     public String getTaskMessage() {
         return taskMessage;
@@ -187,6 +206,22 @@ public class Store {
         Map<String, Object> map = new TreeMap<>();
         map.put("berechtigung", berechtigung);
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("berechtigungen_process", map);
+
+        Task task = taskService.createTaskQuery().active().processInstanceId(processInstance.getId()).singleResult();
+
+        /*
+        TypedValue variableTyped = taskService.getVariableTyped(task.getId(), "berechtigung");
+        logger.info(variableTyped.toString());
+        logger.info(variableTyped.getType().toString());
+        if (variableTyped instanceof ObjectValue) {
+            logger.info(((ObjectValue)variableTyped).getValue().getClass().getCanonicalName());
+            
+        }
+        */
+
+        Object variable = taskService.getVariable(task.getId(), "berechtigung");
+        logger.info(variable.getClass().getCanonicalName());
+        
         
         berechtigung.setProcessInstanceId(processInstance.getId());
         
@@ -202,11 +237,40 @@ public class Store {
         reloadTaskAndProcessInstances();
         notifyListeners();
     }
+    
+    @EventListener
+    private void onMessageEventEvent(MessageEventEvent messageEventEvent) {
+        runtimeService.startProcessInstanceByKey("message_event_process");
+        reloadTaskAndProcessInstances();
+        notifyListeners();
+    }
+    
+    @EventListener
+    private void onMessageEventTriggerEvent(MessageEventTriggerEvent messageEventTriggerEvent) {
+
+        // Processinstance finden. In unserem Beispiel gibt es nur eine Processinstance
+        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().singleResult();
+        
+        EventSubscription subscription = runtimeService
+                .createEventSubscriptionQuery()
+                .processInstanceId(processInstance.getId())
+                .eventType("message")
+                .eventName("MyMessageName")
+                .singleResult();
+        
+        runtimeService
+                .messageEventReceived(subscription.getEventName(), subscription.getExecutionId());
+        
+        reloadTaskAndProcessInstances();
+        notifyListeners();
+    }
 
     @EventListener
     private void onTaskSelectedEvent(TaskSelectedEvent taskSelectedEvent) {
         this.selectedTask = taskSelectedEvent.getTask();
         this.taskMessage = String.format("Selected task: %s", selectedTask.getId());
+        String executionId = this.selectedTask.getExecutionId();
+        selectedVariableMap = runtimeService.getVariables(executionId);
         notifyListeners();
     }
     
@@ -220,6 +284,17 @@ public class Store {
 
     @EventListener
     private void onCompleteTaskEvent(CompleteTaskEvent completeTaskEvent) {
+        
+        Map<String, Object> variableMap = completeTaskEvent.getVariableMap();
+
+        String executionId = completeTaskEvent.getTask().getExecutionId();
+        
+        logger.info("executionId: " + executionId);
+        logger.info(runtimeService.getVariables(executionId).toString());
+        
+        
+        runtimeService.setVariables(executionId, variableMap);
+        runtimeService.setVariableLocal(executionId, "newVariable", 111L);
         taskService.complete(completeTaskEvent.getTask().getId());
         this.selectedTask = null;
         this.taskMessage = String.format("Task %s completed.", completeTaskEvent.getTask().getId());
@@ -383,8 +458,19 @@ public class Store {
     		return false;
     	}
     	
-    	Optional<HistoricProcessInstance> item = historicProcessInstanceList.stream().filter((h) -> h.getId().equals(historicProcessInstance.getId())).findFirst();
+    	Optional<HistoricProcessInstance> item = historicProcessInstanceList.stream().filter(h -> h.getId().equals(historicProcessInstance.getId())).findFirst();
     	return item.isPresent();
     }
+    
+    @EventListener
+    private void onProcessDefinitionSelectedEvent(ProcessDefinitionSelectedEvent processDefinitionSelectedEvent) throws Exception {
 
+        selectedProcessStarter = processStarterList
+                    .stream()
+                    .filter(p -> processDefinitionSelectedEvent.getProcessDefinition().getKey().equalsIgnoreCase(p.getKey()))
+                    .findFirst()
+                    .orElse(null);
+        
+        this.notifyListeners();
+    }
 }

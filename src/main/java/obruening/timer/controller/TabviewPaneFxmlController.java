@@ -30,6 +30,9 @@ public class TabviewPaneFxmlController extends Controller {
     private String h2Url;
     
     @FXML
+    private Tab processDefinitionTab;
+    
+    @FXML
     private Tab taskTab;
     
     @FXML
@@ -55,7 +58,7 @@ public class TabviewPaneFxmlController extends Controller {
     @FXML
     public void initialize() throws IOException {
     	
-        
+        processDefinitionTab.setContent(loadFXML("/fxml/process_definition_split_pane.fxml").getNode());
         taskTab.setContent(loadFXML("/fxml/task_split_pane.fxml").getNode());
         hiProcinstTab.setContent(loadFXML("/fxml/hi_procinst_split_pane.fxml").getNode());
         validationTab.setContent(loadFXML("/fxml/validation_view.fxml").getNode());

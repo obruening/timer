@@ -51,7 +51,7 @@ public class PrimaryDatabaseConfig {
         properties.put("hibernate.hbm2ddl.auto", "create");
         return builder
                 .dataSource(dataSource)
-                .packages("obruening.timer.model.primary*")
+                .packages("obruening.timer.model.primary")
                 .persistenceUnit("primary")
                 .properties(properties)
                 .build();
@@ -85,6 +85,6 @@ public class PrimaryDatabaseConfig {
     		@Qualifier("primaryWebServer") WebServer webServer, 
     		@Qualifier("primaryDataSource") DataSource dataSource) throws SQLException {
 
-    	return webServer.addSession(dataSource.getConnection());
+    	return webServer.addSession(dataSource.getConnection().unwrap(org.h2.jdbc.JdbcConnection.class));
     }
 } 
